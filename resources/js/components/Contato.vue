@@ -71,6 +71,7 @@
         <modal-component titulo="Adicionar Contato" id="modalContato">
           <template v-slot:conteudo>
             <form action="" @submit.prevent=salvar()>
+                <input type="hidden" name="_token" :value="token_csrf">
               <div class="form-row">
                 <div class="col-md-6">
                   <input-component
@@ -185,6 +186,7 @@
 
 <script>
 export default {
+    props:['token_csrf'],
   data() {
     return {
       urlBase: "http://localhost:8000/api/contatos",
@@ -215,25 +217,20 @@ export default {
       let options = {
         headers: {
           'Accept': "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           'Authorization': `Bearer ${token[1]}`,
         }
       };
 
-      let data = {
-          data:{
-            name: this.nomeContato,
+    
+      axios
+        .post(this.urlBase, {
+            nome: this.nomeContato,
             email: this.emailContato,
             endereco: this.enderecoContato,
             grupo_id: this.grupoContato,
-            numero_telefone: numeros,
-          }
-      }
-
-    
-    
-      axios
-        .post(this.urlBase, data, options)
+            numero_telefone: numeros
+        }, options)
         .then((response) => console.log(response))
         .catch((errors) => {
           console.log(errors.response.data);

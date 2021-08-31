@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreContatoRequest;
-use App\Models\Contato;
 use App\Models\Numero;
+use App\Models\Contato;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreContatoRequest;
+use PetstoreIO\StoreController;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class ContatoController extends Controller
 {
@@ -32,29 +35,19 @@ class ContatoController extends Controller
      */
     public function store(StoreContatoRequest $request)
     {
-        //dd($request->all());
-        //return $request;
-
-        //validando
-        
-        //$request->validate($this->contato->rules(), $this->contato->feedback()); 
-
-        return $request;
-        /*
         //criando contato
-        $contato = $this->contato->fill($request->data);
+        $contato = $this->contato->fill($request->all());
         $contato->user_id = auth()->user()->id;
         $contato->save();
         
         //salvando numeros referente a cada contato
-        foreach($request->data['numero_telefone'] as $numero){
+        foreach($request->numero_telefone as $numero){
             $this->numero->create([
                 'contato_id' => $contato->id,
                 'numero_telefone' => $numero
             ]);
         }
         return response()->json(['cadastrado' => 'Contato adicionado com sucesso!'], 201);
-        */
     }
 
     /**

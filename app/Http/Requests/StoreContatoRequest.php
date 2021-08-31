@@ -25,7 +25,7 @@ class StoreContatoRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => ['required', Rule::unique('contatos')->ignore($this->nome)],
+            'nome' => 'required',
             'numero_telefone' => 'required',
         ];
     }

@@ -60,6 +60,7 @@
                     }
                     e.target.submit()
                 })
+                .catch(erro => console.log(erro.response.data))
             }
         }
 

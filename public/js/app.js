@@ -2061,7 +2061,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['token_csrf'],
   data: function data() {
     return {
       urlBase: "http://localhost:8000/api/contatos",
@@ -2083,20 +2085,17 @@ __webpack_require__.r(__webpack_exports__);
       var options = {
         headers: {
           'Accept': "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           'Authorization': "Bearer ".concat(token[1])
         }
       };
-      var data = {
-        data: {
-          name: this.nomeContato,
-          email: this.emailContato,
-          endereco: this.enderecoContato,
-          grupo_id: this.grupoContato,
-          numero_telefone: numeros
-        }
-      };
-      axios.post(this.urlBase, data, options).then(function (response) {
+      axios.post(this.urlBase, {
+        nome: this.nomeContato,
+        email: this.emailContato,
+        endereco: this.enderecoContato,
+        grupo_id: this.grupoContato,
+        numero_telefone: numeros
+      }, options).then(function (response) {
         return console.log(response);
       })["catch"](function (errors) {
         console.log(errors.response.data);
@@ -2274,6 +2273,8 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         e.target.submit();
+      })["catch"](function (erro) {
+        return console.log(erro.response.data);
       });
     }
   }
@@ -38689,6 +38690,11 @@ var render = function() {
                         }
                       },
                       [
+                        _c("input", {
+                          attrs: { type: "hidden", name: "_token" },
+                          domProps: { value: _vm.token_csrf }
+                        }),
+                        _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
                           _c(
                             "div",
