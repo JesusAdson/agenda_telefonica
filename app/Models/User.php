@@ -47,24 +47,7 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function rules(){
-        return [
-            'name' => 'required|min:3|max:50',
-            'email' => 'required|email|unique:users',
-            'password' => 'required'
-        ];
-    }
-    public function feedback(){
-        return [
-            'name.required' => 'Preencha o campo nome.',
-            'name.min' => 'Insira no mínimo 3 caracteres.',
-            'name.max' => 'Insira no máximo 50 caracteres.',
-            'email.required' => 'Preencha o campo email.',
-            'email.email' => 'Insira um email válido.',
-            'email.unique' => 'Já existe um usuário cadastrado com esse email.',
-            'password.required' => 'Insira uma senha.'
-        ];
-    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

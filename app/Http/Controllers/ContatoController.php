@@ -5,10 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Numero;
 use App\Models\Contato;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\StoreContatoRequest;
-use PetstoreIO\StoreController;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class ContatoController extends Controller
 {
@@ -23,9 +19,38 @@ class ContatoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json($this->contato->with(['numeros', 'grupo', 'user'])->get(), 200);
+        //dd(auth()->user()->id);
+       
+        if($request->has('nome')){
+            return response()->json($this->contato
+            ->with('numeros')
+            ->where('nome', 'LIKE', '%'.$request->nome.'%')
+            ->get(), 200
+    );
+        }
+        if($request->has('id')){
+            return response()->json($this->contato
+            ->with('numeros')
+            ->where('id', $request->id)
+            ->get(), 200
+    );
+    if($request->has('nome') && $request->has('id')){
+        return response()->json($this->contato
+        ->with('numeros')
+        ->where('user_id', auth()->user()->id)
+        ->where('nome', 'LIKE', '%'.$request->nome.'%')
+        ->where('id', $request->id)
+        ->get(), 200
+);
+    }
+        }
+        return response()->json($this->contato
+        ->with('numeros')
+        ->where('user_id', auth()->user()->id)
+        ->orderBy('nome', 'ASC')
+        ->paginate(2), 200);
     }
     /**
      * Store a newly created resource in storage.
@@ -33,21 +58,20 @@ class ContatoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreContatoRequest $request)
+    public function store(Request $request)
     {
+        $request->validate($this->contato->rules(), $this->contato->feedback());
         //criando contato
         $contato = $this->contato->fill($request->all());
         $contato->user_id = auth()->user()->id;
         $contato->save();
         
         //salvando numeros referente a cada contato
-        foreach($request->numero_telefone as $numero){
-            $this->numero->create([
-                'contato_id' => $contato->id,
-                'numero_telefone' => $numero
-            ]);
-        }
-        return response()->json(['cadastrado' => 'Contato adicionado com sucesso!'], 201);
+        $this->numero->create([
+            'contato_id' => $contato->id,
+            'numero_telefone' => $request->numero_telefone
+        ]);
+        return response()->json($contato, 201);
     }
 
     /**
@@ -58,7 +82,7 @@ class ContatoController extends Controller
      */
     public function show($id)
     {
-        $contato = $this->contato->with(['numeros', 'grupo'])->find($id);
+        $contato = $this->contato->with('numeros')->find($id);
 
         if($contato === null){
             return response()->json(['erro' => 'Contato não encontrado!'], 404);
@@ -76,6 +100,7 @@ class ContatoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //dd($request->all() , $id);
         $contato = $this->contato->find($id);
         if($contato === null){
             return response()->json(['erro' => 'Contato não encontrado!'], 404);
@@ -117,9 +142,11 @@ class ContatoController extends Controller
         $contato = $this->contato->find($id);
 
         if($contato === null){
-            return response()->json(['erro' => 'Contato não encontrado!']);
+            return response()->json(['erro' => 'Contato não encontrado!', 404]);
         }
         $this->numero->where('contato_id', $id)->delete();
         $contato->delete();
+
+        return response()->json(['sucesso' => 'Contato removido com sucesso']);
     }
 }

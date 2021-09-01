@@ -18,11 +18,8 @@ class CreateContatosTable extends Migration
             $table->string('nome', 100);
             $table->string('email', 150)->nullable();
             $table->string('endereco', 100)->nullable();
-            $table->unsignedBigInteger('grupo_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
-
-            $table->foreign('grupo_id')->references('id')->on('grupos');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

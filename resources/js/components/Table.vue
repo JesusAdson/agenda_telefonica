@@ -1,31 +1,24 @@
 <template>
-  <table class="table table-hover">
+  <table class="table table-hover table-responsive-md">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Primeiro</th>
-        <th scope="col">Último</th>
-        <th scope="col">Nickname</th>
+        <th v-for="titulo, key in titulos" :key="key">
+          {{titulo}}
+        </th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
+      <tr v-for="contato in data" :key="contato.id">
+        <td>{{contato.nome}}</td>
+        <td>{{contato.email}}</td>
+        <td>{{contato.endereco}}</td>
+        <td>{{contato.numeros.numero_telefone}}</td>
+        <td>
+          <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#visualizarContatoModal" @click="setStore(contato), limpa()" >Visualizar</button>
+          <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#atualizarContatoModal" @click="setStore(contato)">Editar</button>
+          <button class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#removerContatoModal" @click="setStore(contato), limpa()">Remover</button>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -33,6 +26,15 @@
 
 <script>
     export default{
-        
+        props: ['data', 'titulos'],
+        methods:{
+          setStore(contato){
+            this.$store.state.contato = contato
+          },
+          limpa(){
+            this.$store.state.transacao.mensagem = ''
+            this.$store.state.transacao.status = null
+          }
+        }
     }
 </script>

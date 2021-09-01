@@ -13,28 +13,26 @@ use Illuminate\Support\Facades\DB;
 class Contato extends Model
 {
     use HasFactory;
-    protected $fillable = ['nome', 'email', 'endereco', 'grupo_id'];
+    protected $fillable = ['nome', 'email', 'endereco'];
 
     public function rules(){
         return [
             'nome' => 'required',
             'numero_telefone' => 'required',
+            'email' => 'email'
         ];
     }
 
     public function feedback(){
         return [
             'nome.required' => 'Preencha o campo nome',
-            'numero_telefone.required' => 'Insira ao menos um número de telefone'
+            'numero_telefone.required' => 'Insira um número de telefone',
+            'email.email' => 'Insira um email válido'
         ];
     }
 
     public function numeros(){
-        return $this->hasMany(Numero::class);
-    }
-
-    public function grupo(){
-        return $this->belongsTo(Grupo::class);
+        return $this->hasOne(Numero::class);
     }
 
     public function user(){
